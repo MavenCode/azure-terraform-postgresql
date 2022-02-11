@@ -1,0 +1,23 @@
+sql_name = "sqltestname"
+resource_group_location = "eastus"
+resource_group_name = "k8s_test"
+sku_name = "B_Gen5_2"
+storage_mb = 5120
+backup_retention_days = 7
+geo_redundant_backup_enabled = false
+auto_grow_enabled = true
+
+admin_login = "adminlogin"
+administrator_login_password = "ADMIN@pass"
+server_version = "11"
+ssl_enforcement_enabled = true
+public_network_access_enabled = true
+
+sql_db_name = "testdb"
+db_charset = "UTF8"
+db_collation = "ENGLISH_United States.1252"
+
+subscription_id = "XXXX"
+client_id       = "XXXX"
+client_secret   = "XXXX"
+tenant_id       = "XXXX"
