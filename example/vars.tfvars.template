@@ -1,7 +1,7 @@
 sql_name = "sqltestname"
 resource_group_location = "eastus"
 resource_group_name = "k8s_test"
-sku_name = "B_Gen5_2"
+sku_name = "GP_Gen5_2"
 storage_mb = 5120
 backup_retention_days = 7
 geo_redundant_backup_enabled = false
@@ -21,3 +21,9 @@ subscription_id = "XXXX"
 client_id       = "XXXX"
 client_secret   = "XXXX"
 tenant_id       = "XXXX"
+
+postgres_vnet_name      = "postgres-test-vnet"
+postgres_subnet_name    = "postgres-test-subnet"
+vnet_address_range      = ["10.4.0.0/16"]
+subnet_address_range    = ["10.4.1.0/24"]
+vnet_exists             = false

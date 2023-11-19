@@ -21,3 +21,19 @@ variable "subscription_id" {}
 variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
+
+# virtual network and subnet
+variable "postgres_vnet_name" {}
+variable "postgres_subnet_name" {}
+
+variable "vnet_address_range" {
+  description = "The address space for the virtual network"
+  type        = list(string)
+}
+
+variable "subnet_address_range" {
+  description = "The address prefixes for the subnet"
+  type        = list(string)
+}
+
+variable "vnet_exists" {}
