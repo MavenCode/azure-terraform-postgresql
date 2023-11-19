@@ -22,8 +22,8 @@ client_id       = "XXXX"
 client_secret   = "XXXX"
 tenant_id       = "XXXX"
 
-postgres_vnet_name      = "postgres-test-vnet"
-postgres_subnet_name    = "postgres-test-subnet"
+vnet_name               = "test-vnet"
+subnet_name             = "test-subnet"
 vnet_address_range      = ["10.4.0.0/16"]
 subnet_address_range    = ["10.4.1.0/24"]
 vnet_exists             = false

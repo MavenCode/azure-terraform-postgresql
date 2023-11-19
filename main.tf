@@ -1,13 +1,13 @@
 data "azurerm_virtual_network" "existing_postgres_vnet" {
   count                 = var.vnet_exists ? 1 : 0
-  name                  = var.postgres_vnet_name
+  name                  = var.vnet_name
   resource_group_name   = var.resource_group_name
 }
 
 data "azurerm_subnet" "existing_postgres_subnet" {
   count                 = var.vnet_exists ? 1 : 0
-  name                  = var.postgres_subnet_name
-  virtual_network_name  = var.postgres_vnet_name
+  name                  = var.subnet_name
+  virtual_network_name  = var.vnet_name
   resource_group_name   = var.resource_group_name
 }
 
@@ -17,7 +17,7 @@ locals {
 
 resource "azurerm_virtual_network" "postgres_vnet" {
   count               = local.vnet_exists ? 0 : 1
-  name                = var.postgres_vnet_name
+  name                = var.vnet_name
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   address_space       = var.vnet_address_range
@@ -25,8 +25,8 @@ resource "azurerm_virtual_network" "postgres_vnet" {
 
 resource "azurerm_subnet" "postgres_subnet" {
   count                = local.vnet_exists ? 0 : 1
-  name                 = var.postgres_subnet_name
-  virtual_network_name = var.postgres_vnet_name
+  name                 = var.subnet_name
+  virtual_network_name = var.vnet_name
   resource_group_name  = var.resource_group_name
   address_prefixes     = var.subnet_address_range
   service_endpoints    = ["Microsoft.Sql"]
