@@ -23,8 +23,8 @@ variable "client_secret" {}
 variable "tenant_id" {}
 
 # virtual network and subnet
-variable "postgres_vnet_name" {}
-variable "postgres_subnet_name" {}
+variable "vnet_name" {}
+variable "subnet_name" {}
 
 variable "vnet_address_range" {
   description = "The address space for the virtual network"

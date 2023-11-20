@@ -20,8 +20,8 @@ module "postgresql_setup" {
   client_id                         = var.client_id
   client_secret                     = var.client_secret
   tenant_id                         = var.tenant_id
-  postgres_vnet_name                = var.postgres_vnet_name
-  postgres_subnet_name              = var.postgres_subnet_name
+  vnet_name                         = var.vnet_name
+  subnet_name                       = var.subnet_name
   vnet_address_range                = var.vnet_address_range
   subnet_address_range              = var.subnet_address_range
   vnet_exists                       = var.vnet_exists
