@@ -1,41 +1,3 @@
-data "azurerm_virtual_network" "existing_postgres_vnet" {
-  count                 = var.vnet_exists ? 1 : 0
-  name                  = var.vnet_name
-  resource_group_name   = var.resource_group_name
-}
-
-data "azurerm_subnet" "existing_postgres_subnet" {
-  count                 = var.vnet_exists ? 1 : 0
-  name                  = var.subnet_name
-  virtual_network_name  = var.vnet_name
-  resource_group_name   = var.resource_group_name
-}
-
-locals {
-  vnet_exists = length(data.azurerm_virtual_network.existing_postgres_vnet) > 0
-}
-
-resource "azurerm_virtual_network" "postgres_vnet" {
-  count               = local.vnet_exists ? 0 : 1
-  name                = var.vnet_name
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
-  address_space       = var.vnet_address_range
-}
-
-resource "azurerm_subnet" "postgres_subnet" {
-  count                = local.vnet_exists ? 0 : 1
-  name                 = var.subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name  = var.resource_group_name
-  address_prefixes     = var.subnet_address_range
-  service_endpoints    = ["Microsoft.Sql"]
-
-  depends_on = [
-    azurerm_virtual_network.postgres_vnet
-  ]
-}
-
 resource "azurerm_postgresql_server" "sql_server" {
     name                            = var.sql_name
     location                        = var.resource_group_location
@@ -53,17 +15,13 @@ resource "azurerm_postgresql_server" "sql_server" {
     version                         = var.server_version
     ssl_enforcement_enabled         = var.ssl_enforcement_enabled
     public_network_access_enabled   = var.public_network_access_enabled
-
-    depends_on = [
-      azurerm_subnet.postgres_subnet
-    ]
 }
 
 resource "azurerm_postgresql_virtual_network_rule" "postgres_vnet_rule" {
   name                                 = var.sql_name
   resource_group_name                  = var.resource_group_name
   server_name                          = azurerm_postgresql_server.sql_server.name
-  subnet_id                            = local.vnet_exists ? data.azurerm_subnet.existing_postgres_subnet[0].id : azurerm_subnet.postgres_subnet[0].id
+  subnet_id                            = length(var.existing_subnet) > 0 ? var.existing_subnet_id : var.new_subnet_id
   ignore_missing_vnet_service_endpoint = true
 
   depends_on = [
@@ -81,4 +39,50 @@ resource "azurerm_postgresql_database" "sql_db" {
     depends_on = [
       azurerm_postgresql_server.sql_server
     ]
+}
+
+resource "azurerm_private_endpoint" "private_endpoint" {
+  name                = var.private_endpoint_name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  subnet_id           = length(var.existing_subnet) > 0 ? var.existing_subnet_id : var.new_subnet_id
+
+  private_service_connection {
+    name                           = var.private_endpoint_name
+    private_connection_resource_id = azurerm_postgresql_server.sql_server.id
+    subresource_names              = [ "postgresqlServer" ]
+    is_manual_connection           = false
+  }
+
+  ip_configuration {
+    name                = var.private_endpoint_name
+    private_ip_address  = var.postres_private_ip
+    subresource_name    = "postgresqlServer"
+    member_name         = "postgresqlServer"
+  }
+
+  depends_on = [
+    azurerm_postgresql_server.sql_server
+  ]
+}
+
+resource "azurerm_dns_zone" "dns_zone" {
+  name                = "${var.postgres_dns_name}-dev.postgres.database.azure.com"
+  resource_group_name = var.resource_group_name
+
+  depends_on = [
+    azurerm_private_endpoint.private_endpoint
+  ]
+}
+
+resource "azurerm_dns_a_record" "dns_record" {
+  name                = "postgres_private_record"
+  zone_name           = azurerm_dns_zone.dns_zone.name
+  resource_group_name = var.resource_group_name
+  ttl                 = var.time_to_live
+  records             = [var.postres_private_ip]
+
+  depends_on = [
+    azurerm_dns_zone.dns_zone
+  ]
 }

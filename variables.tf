@@ -22,18 +22,16 @@ variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
 
-# virtual network and subnet
-variable "vnet_name" {}
-variable "subnet_name" {}
+variable "existing_subnet" {}
 
-variable "vnet_address_range" {
-  description = "The address space for the virtual network"
-  type        = list(string)
-}
+variable "existing_subnet_id" {}
 
-variable "subnet_address_range" {
-  description = "The address prefixes for the subnet"
-  type        = list(string)
-}
+variable "new_subnet_id" {}
 
-variable "vnet_exists" {}
+variable "private_endpoint_name" {}
+
+variable "postres_private_ip" {}
+
+variable "postgres_dns_name" {}
+
+variable "time_to_live" {}
