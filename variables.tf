@@ -22,12 +22,7 @@ variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
 
-variable "existing_subnet" {}
-
-variable "existing_subnet_id" {}
-
-variable "new_subnet_id" {}
-
+variable "subnet_id" {}
 variable "private_endpoint_name" {}
 
 variable "postres_private_ip" {}
