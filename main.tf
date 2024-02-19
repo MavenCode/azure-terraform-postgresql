@@ -66,7 +66,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   ]
 }
 
-resource "azurerm_dns_zone" "dns_zone" {
+resource "azurerm_private_dns_zone" "private_dns" {
   name                = "${var.postgres_dns_name}.postgres.database.azure.com"
   resource_group_name = var.resource_group_name
 
@@ -75,14 +75,25 @@ resource "azurerm_dns_zone" "dns_zone" {
   ]
 }
 
+resource "azurerm_private_dns_zone_virtual_network_link" "network_link" {
+  name                  = "${var.postgres_dns_name}.postgres.database.azure.com"
+  resource_group_name   = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.private_dns.name
+  virtual_network_id    = var.vnet_id
+
+  depends_on = [
+    azurerm_private_dns_zone.private_dns
+  ]
+}
+
 resource "azurerm_dns_a_record" "dns_record" {
-  name                = "postgres_private_record"
-  zone_name           = azurerm_dns_zone.dns_zone.name
+  name                = "db"
+  zone_name           = azurerm_private_dns_zone.private_dns.name
   resource_group_name = var.resource_group_name
   ttl                 = var.time_to_live
   records             = [var.postres_private_ip]
 
   depends_on = [
-    azurerm_dns_zone.dns_zone
+    azurerm_private_dns_zone.private_dns
   ]
 }

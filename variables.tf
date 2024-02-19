@@ -23,6 +23,7 @@ variable "client_secret" {}
 variable "tenant_id" {}
 
 variable "subnet_id" {}
+variable "vnet_id" {}
 variable "private_endpoint_name" {}
 
 variable "postres_private_ip" {}
