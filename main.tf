@@ -76,7 +76,7 @@ resource "azurerm_private_dns_zone" "private_dns" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "network_link" {
-  name                  = "${var.postgres_dns_name}.postgres.database.azure.com"
+  name                  = "${var.postgres_dns_name}"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.private_dns.name
   virtual_network_id    = var.vnet_id
@@ -86,7 +86,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "network_link" {
   ]
 }
 
-resource "azurerm_dns_a_record" "dns_record" {
+resource "azurerm_private_dns_a_record" "dns_record" {
   name                = "db"
   zone_name           = azurerm_private_dns_zone.private_dns.name
   resource_group_name = var.resource_group_name
